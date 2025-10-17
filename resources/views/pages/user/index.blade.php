@@ -1,0 +1,84 @@
+@extends('layouts.app')
+@section('content')
+    <div class="main-content">
+        <section class="section">
+            <div class="section-header">
+                <h1>Manage Data User</h1>
+                <div class="section-header-breadcrumb">
+                    <a href="{{ route('user.create') }}" class="btn btn-success d-flex justify-content-center">Add</a>
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="col-12 col-md-6 col-lg-12">
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-md">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Photo</th>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>Detail</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td>
+                                        <img src="assets/img/santoso-dia-chan.jpeg" width="100px" height="100px"
+                                            alt="User Photo">
+                                    </td>
+                                    <td>2017-01-09</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="badge badge-info">Admin</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center"><a href="/user-edit"
+                                                class="btn btn-secondary box">Detail</a></div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex justify-content-center">
+                                            <a href="/user.edit" class="btn btn-warning box">Edit</a>
+
+                                            <a href="#" class="btn btn-danger box">Delete</a>
+                                        </div>
+                                        <div class="form-group d-flex justify-content-center">
+                                            <label class="custom-switch">
+                                                <input type="checkbox" name="custom-switch-checkbox"
+                                                    class="custom-switch-input" />
+                                                <span class="custom-switch-indicator"></span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="card-footer text-right">
+                            <nav class="d-inline-block">
+                                <ul class="pagination mb-0">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1"><i
+                                                class="fas fa-chevron-left"></i></a>
+                                    </li>
+                                    <li class="page-item active">
+                                        <a class="page-link" href="#">1 <span class="sr-only">(current)</span></a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">2</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">3</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+@endsection
