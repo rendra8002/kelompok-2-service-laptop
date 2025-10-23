@@ -11,6 +11,21 @@
     <link rel="stylesheet" href="{{ asset('assets/modules/fontawesome/css/all.min.css') }}">
 
     <!-- CSS Libraries -->
+    <style>
+        /* auto fill */
+        .img-fill {
+            object-fit: cover;
+            /* gambar penuh tanpa distorsi */
+            object-position: center;
+            /* posisi tengah */
+
+        }
+
+        /* lingkaran */
+        .lingkaran {
+            border-radius: 50%;
+        }
+    </style>
 
     <!-- Template CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
@@ -170,7 +185,12 @@
         });
     </script> --}}
 
-@stack('costom.js')
+
+
+
+
+    {{-- ajakskskskssk --}}
+    @stack('costom.js')
 </body>
 
 </html>

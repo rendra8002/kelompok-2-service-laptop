@@ -44,7 +44,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-12">
+                        {{-- <div class="col-lg-12">
                             <div class="card">
                                 <div class="table-responsive">
                                     <table class="table table-bordered table-md">
@@ -66,7 +66,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
 
                         {{-- <div class="col-12">
