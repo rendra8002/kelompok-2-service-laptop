@@ -14,7 +14,7 @@
                             </a>
                         </li>
                         </li>
-                        <li><a class="nav-link" href="{{ route('services.index') }}"><i class="fas fa-laptop-code"></i> <span>Page
+                        <li class="{{ request()->is('/services') || request()->is('services') ? 'active' : '' }}"><a class="nav-link" href="{{ route('services.index') }}"><i class="fas fa-laptop-code"></i> <span>Page
                                     Services</span></a></li>
                                     
                         <li class="menu-header">Master</li>
