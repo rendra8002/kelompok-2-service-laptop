@@ -46,8 +46,8 @@
                                 <p>••••••••</p>
                             </div>
                             <div class="form-group">
-                                <label>Role</label>
-                                <p>{{ ($user->role) }}</p>
+                                <label class="d-block">Role</label>
+                                <p class="badge user {{ strtolower($user->role) }}">{{ $user->role }}</p>
                             </div>
                         </div>
                     </div>
@@ -55,7 +55,6 @@
             </div>
         </section>
     </div>
-
     <style>
         .card {
             border-radius: 12px;

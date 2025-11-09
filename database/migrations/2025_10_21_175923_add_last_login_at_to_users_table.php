@@ -31,6 +31,30 @@ return new class extends Migration
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        DB::table('users')->insert([
+            'photo' => 'admin-df/santoso-dia-chan.jpeg',
+            'name' => 'Satono Teknisi',
+            'address' => 'Satono',
+            'phone_number' => '23221',
+            'email' => 'satono1@gmail.com',
+            'password' => Hash::make('wleee'), // password default
+            'role' => 'technician',
+            'status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        DB::table('users')->insert([
+            'photo' => 'admin-df/santoso-dia-chan.jpeg',
+            'name' => 'Satono Customer',
+            'address' => 'Satono',
+            'phone_number' => '23221',
+            'email' => 'satono2@gmail.com',
+            'password' => Hash::make('wleee'), // password default
+            'role' => 'customer',
+            'status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
     /**

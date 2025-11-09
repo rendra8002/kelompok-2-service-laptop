@@ -13,4 +13,5 @@ class Laptop extends Model
     protected $guarded = [];
 
     //relasi
+    
 }

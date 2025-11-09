@@ -34,16 +34,20 @@
                             </div>
                             <div class="form-group">
                                 <label>Brand</label>
-                                <input type="text" name="brand" class="form-control" />
+                                <input type="text" name="brand" class="form-control" value="{{ old('brand') }}" />
                             </div>
+
                             <div class="form-group">
                                 <label>Model</label>
-                                <input type="text" name="model" class="form-control" />
+                                <input type="text" name="model" class="form-control" value="{{ old('model') }}" />
                             </div>
+
                             <div class="form-group">
                                 <label>Release Year</label>
-                                <input type="text"  name="release_year" class="form-control" />
+                                <input type="text" name="release_year" class="form-control"
+                                    value="{{ old('release_year') }}" />
                             </div>
+
                             <div class="card-footer text-left">
                                 <button class="btn btn-primary mr-1" type="submit">Submit</button>
                             </div>
@@ -53,6 +57,22 @@
             </form>
         </section>
     </div>
+    {{-- SweetAlert2 CDN --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        @if (session('error'))
+            Swal.fire({
+                title: 'Error!',
+                text: '{{ ('Model has already been used') }}',
+                icon: 'error',
+                confirmButtonText: 'Fix',
+                confirmButtonColor: '#d33'
+            });
+        @endif
+    </script>
+{{-- end sweet  --}}
+
     <script>
         function previewPhoto(input) {
             const file = input.files[0];

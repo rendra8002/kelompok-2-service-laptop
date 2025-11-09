@@ -6,122 +6,134 @@
             <div class="section-header">
                 <h1>Dashboard</h1>
             </div>
+
             <div class="row">
+                {{-- Total Customer --}}
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
                         <div class="card-icon bg-primary">
-                            <i class="far fa-user"></i>
+                            <i class="fas fa-users"></i>
                         </div>
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Total Admin</h4>
+                                <h4>Total Customers</h4>
                             </div>
-                            <div class="card-body">10</div>
+                            <div class="card-body">
+                                {{ $totalCustomers }}
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                {{-- Total Technician --}}
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
-                        <div class="card-icon bg-danger">
-                            <i class="far fa-newspaper"></i>
+                        <div class="card-icon bg-info">
+                            <i class="fas fa-user-cog"></i>
                         </div>
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>News</h4>
+                                <h4>Total Technicians</h4>
                             </div>
-                            <div class="card-body">42</div>
+                            <div class="card-body">
+                                {{ $totalTechnicians }}
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                {{-- Service In Progress --}}
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
                         <div class="card-icon bg-warning">
-                            <i class="far fa-file"></i>
+                            <i class="fas fa-tools"></i>
                         </div>
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Reports</h4>
+                                <h4>Services In Progress</h4>
                             </div>
-                            <div class="card-body">1,201</div>
+                            <div class="card-body">
+                                {{ $servicesInProgress }}
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                {{-- Finished Services --}}
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
                         <div class="card-icon bg-success">
-                            <i class="fas fa-circle"></i>
+                            <i class="fas fa-check-circle"></i>
                         </div>
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Online Users</h4>
+                                <h4>Finished Services</h4>
                             </div>
-                            <div class="card-body">47</div>
+                            <div class="card-body">
+                                {{ $finishedServices }}
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
+
+
+            {{-- 🔹 Tabel data service --}}
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-12 col-sm-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Statistics</h4>
-                            <div class="card-header-action">
-                                <div class="btn-group">
-                                    <a href="#" class="btn btn-primary">Week</a>
-                                    <a href="#" class="btn">Month</a>
-                                </div>
-                            </div>
+                            <h4>Recent Services</h4>
                         </div>
                         <div class="card-body">
-                            <canvas id="myChart" height="182"></canvas>
-                            <div class="statistic-details mt-sm-4">
-                                <div class="statistic-details-item">
-                                    <span class="text-muted"><span class="text-primary"><i
-                                                class="fas fa-caret-up"></i></span>
-                                        7%</span>
-                                    <div class="detail-value">
-                                        $243
-                                    </div>
-                                    <div class="detail-name">
-                                        Today's Sales
-                                    </div>
-                                </div>
-                                <div class="statistic-details-item">
-                                    <span class="text-muted"><span class="text-danger"><i
-                                                class="fas fa-caret-down"></i></span>
-                                        23%</span>
-                                    <div class="detail-value">
-                                        $2,902
-                                    </div>
-                                    <div class="detail-name">
-                                        This Week's Sales
-                                    </div>
-                                </div>
-                                <div class="statistic-details-item">
-                                    <span class="text-muted"><span class="text-primary"><i
-                                                class="fas fa-caret-up"></i></span>9%</span>
-                                    <div class="detail-value">
-                                        $12,821
-                                    </div>
-                                    <div class="detail-name">
-                                        This Month's Sales
-                                    </div>
-                                </div>
-                                <div class="statistic-details-item">
-                                    <span class="text-muted"><span class="text-primary"><i
-                                                class="fas fa-caret-up"></i></span>
-                                        19%</span>
-                                    <div class="detail-value">
-                                        $92,142
-                                    </div>
-                                    <div class="detail-name">
-                                        This Year's Sales
-                                    </div>
-                                </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>No. Invoice</th>
+                                            <th>Customer</th>
+                                            <th>Laptop</th>
+                                            <th>Status</th>
+                                            <th>Total Cost</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($services as $index => $service)
+                                            <tr>
+                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ $service->no_invoice ?? '-' }}</td>
+                                                <td>{{ $service->customer->name ?? 'N/A' }}</td>
+                                                <td>
+                                                    {{-- tampilkan nama laptop jika ada relasi --}}
+                                                    {{ $service->laptop->brand ?? 'Laptop ID: ' . $service->laptop_id }}
+                                                </td>
+                                                <td>
+                                                    <span
+                                                        class="badge 
+                                                        @if ($service->status == 'finished') badge-success
+                                                        @elseif($service->status == 'process') badge-warning
+                                                        @elseif($service->status == 'accepted') badge-info
+                                                        @elseif($service->status == 'taken') badge-primary
+                                                        @else badge-danger @endif">
+                                                        {{ ucfirst($service->status) }}
+                                                    </span>
+                                                </td>
+                                                <td>Rp {{ number_format($service->total_cost, 0, ',', '.') }}</td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center">No service data available</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
         </section>
     </div>
 @endsection

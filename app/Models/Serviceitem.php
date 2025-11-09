@@ -4,10 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Serviceitem extends Model
+class ServiceItem extends Model
 {
     protected $table = 'serviceitems';
-
     protected $guarded = [];
 
     public function getFormattedPriceAttribute()

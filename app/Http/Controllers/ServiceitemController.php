@@ -27,7 +27,7 @@ class ServiceitemController extends Controller
     public function index()
     {
         session()->forget('allowed_edit_id');
-        $dataserviceitem = Serviceitem::paginate(3);
+        $dataserviceitem = Serviceitem::paginate(10);
         return view('pages.serviceitem.index', compact('dataserviceitem'));
     }
 
@@ -45,24 +45,38 @@ class ServiceitemController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'service_name' => 'required',
+            'service_name' => 'required|string|max:255',
             'price' => 'required',
         ]);
 
-        // 🔹 Bersihkan format "Rp" dan titik sebelum disimpan
-        $cleanPrice = str_replace(['Rp', '.', ' '], '', $request->price);
-        $cleanPrice = (int) $cleanPrice;
+        try {
+            // 🔍 Cek apakah nama service sudah ada
+            $existing = \App\Models\Serviceitem::where('service_name', $request->service_name)->first();
+            if ($existing) {
+                return redirect()
+                    ->back()
+                    ->withInput($request->except('service_name')) // biar field lain tetap terisi
+                    ->with('error', 'duplicate_service');
+            }
 
-        $dataserviceitem = [
-            'service_name' => $request->service_name,
-            'price' => $cleanPrice, // simpan angka bersih
-        ];
+            // 🔢 Bersihkan harga dari format "Rp"
+            $cleanPrice = preg_replace('/[^\d]/', '', $request->price);
 
+            $dataserviceitem = [
+                'service_name' => $request->service_name,
+                'price' => $cleanPrice,
+            ];
 
-        Serviceitem::create($dataserviceitem);
+            \App\Models\Serviceitem::create($dataserviceitem);
 
-        return redirect()->route('serviceitem.index');
+            return redirect()->route('serviceitem.index')
+                ->with('success', 'Service item successfully added!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to create service item. Please try again!');
+        }
     }
+
 
     /**
      * Display the specified resource.
