@@ -12,17 +12,13 @@
                 <div class="section-body" style="display: flex; justify-content: center;">
                     <div class="card" style="width:800px;">
                         <div class="card-header">
-                            <h4>Enter User Data</h4>
+                            <h4>Enter Service Item Data</h4>
                         </div>
                         <div class="card-body">
                             <div class="form-group">
                                 <label>Service Name</label>
-                                <input type="text" name="service_name" class="form-control" />
+                                <input type="text" name="service_name" class="form-control" autofocus />
                             </div>
-                            {{-- <div class="form-group">
-                            <label>Price</label>
-                            <input type="text" name="price" class="form-control" />
-                        </div> --}}
                             <div class="form-group">
                                 <label>Price</label>
                                 <input type="text" name="price" id="price" class="form-control" placeholder="Rp 0"
@@ -37,6 +33,37 @@
             </form>
         </section>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (session('error') === 'duplicate_service')
+            Swal.fire({
+                title: 'Error!',
+                text: 'Service name has already been used',
+                icon: 'error',
+                confirmButtonText: 'Fix',
+                confirmButtonColor: '#d33'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const input = document.querySelector('input[name="service_name"]');
+                    input.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    input.focus();
+                }
+            });
+        @elseif (session('error'))
+            Swal.fire({
+                title: 'Error!',
+                text: '{{ session('error') }}',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#d33'
+            });
+        @endif
+    </script>
+
+
 
     <script>
         function formatRupiah(input) {

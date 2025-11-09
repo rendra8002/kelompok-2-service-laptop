@@ -57,7 +57,7 @@
                             <div class="form-group">
                                 <label>Password</label>
                                 <input type="text" name="password" class="form-control"
-                                    value="••••••••" />
+                                    value="{{ old('phone_number', $datauser->password) }}" />
                                 <small class="">Fill in only if you want to change your current password</small>
                             </div>
                             <div class="form-group">
@@ -68,12 +68,11 @@
                                     <option value="technician"
                                         {{ old('role', $datauser->role) == 'technician' ? 'selected' : '' }}>Technician
                                     </option>
-                                    <option value="costumer"
-                                        {{ old('role', $datauser->role) == 'costumer' ? 'selected' : '' }}>Costumer
+                                    <option value="customer"
+                                        {{ old('role', $datauser->role) == 'customer' ? 'selected' : '' }}>Customer
                                     </option>
                                 </select>
                             </div>
-
                             <div class="card-footer text-left">
                                 <button class="btn btn-primary mr-1" type="submit">Submit</button>
                             </div>

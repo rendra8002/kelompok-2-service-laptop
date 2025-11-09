@@ -34,9 +34,15 @@ class LaptopController extends Controller
     public function index()
     {
         session()->forget('allowed_edit_id');
-        $datalaptop = Laptop::paginate(3);
+
+        // Ambil data laptop dari database
+        $datalaptop = Laptop::paginate(10);
+
+        // Kirim ke view laptop.index
         return view('pages.laptop.index', compact('datalaptop'));
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -57,6 +63,16 @@ class LaptopController extends Controller
             'release_year' => 'required',
         ]);
 
+        // 🔍 Cek apakah model sudah ada
+        $existing = Laptop::where('model', $request->model)->first();
+        if ($existing) {
+         
+            return redirect()
+                ->back()
+                ->withInput($request->except('model')) // Simpan input lain, kecuali model
+                ->with('error', "' $request->model '" );
+        }
+
         $datalaptop = [
             'brand' => $request->brand,
             'model' => $request->model,
@@ -69,7 +85,9 @@ class LaptopController extends Controller
 
         Laptop::create($datalaptop);
 
-        return redirect()->route('laptop.index');
+        return redirect()
+            ->route('laptop.index')
+            ->with('success', 'Laptop data has been added successfully');
     }
 
     /**

@@ -6,9 +6,11 @@
                 @csrf
                 <div class="section-header">
                     <h1>Manage Data User</h1>
-                    <div class="section-header-breadcrumb d-flex justify-content-center"><a href="{{ route('user.index') }}"
-                            class="btn btn-secondary ">Back</a></div>
+                    <div class="section-header-breadcrumb d-flex justify-content-center">
+                        <a href="{{ route('user.index') }}" class="btn btn-secondary">Back</a>
+                    </div>
                 </div>
+
                 <div class="section-body" style="display: flex; justify-content: center;">
                     <div class="card" style="width:800px;">
                         <div class="card-header">
@@ -35,19 +37,20 @@
 
                             <div class="form-group">
                                 <label>Name</label>
-                                <input type="text" name="name" class="form-control" />
+                                <input type="text" name="name" class="form-control" value="{{ old('name') }}" />
                             </div>
                             <div class="form-group">
                                 <label>Address</label>
-                                <input type="text" name="address" class="form-control" />
+                                <input type="text" name="address" class="form-control" value="{{ old('address') }}" />
                             </div>
                             <div class="form-group">
                                 <label>Phone Number</label>
-                                <input type="text" name="phone_number" class="form-control" />
+                                <input type="number" name="phone_number" class="form-control"
+                                    value="{{ old('phone_number') }}" />
                             </div>
                             <div class="form-group">
                                 <label>Email</label>
-                                <input type="email" name="email" class="form-control" />
+                                <input type="email" name="email" class="form-control" value="{{ old('email') }}" />
                             </div>
                             <div class="form-group">
                                 <label>Password</label>
@@ -60,7 +63,7 @@
                                     <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
                                     <option value="technician" {{ old('role') == 'technician' ? 'selected' : '' }}>
                                         Technician</option>
-                                    <option value="costumer" {{ old('role') == 'costumer' ? 'selected' : '' }}>Costumer
+                                    <option value="customer" {{ old('role') == 'customer' ? 'selected' : '' }}>Customer
                                     </option>
                                 </select>
                             </div>
@@ -74,6 +77,30 @@
             </form>
         </section>
     </div>
+    {{-- SweetAlert2 CDN --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (session('error') === 'duplicate_email')
+            Swal.fire({
+                title: 'Error!',
+                text: 'Email has already been used',
+                icon: 'error',
+                confirmButtonText: 'Fix',
+                confirmButtonColor: '#d33'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const input = document.querySelector('input[name="email"]');
+                    input.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    input.focus();
+                }
+            });
+        @endif
+    </script>
+
+    {{-- end sweet  --}}
 
     <script>
         function previewPhoto(input) {

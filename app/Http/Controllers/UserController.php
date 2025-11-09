@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,84 +17,77 @@ class UserController extends Controller
         return response()->json(['success' => true, 'status' => $user->status]);
     }
 
-
-
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $datauser = User::paginate(3);
+        session()->forget('allowed_edit_id');
+
+        $datauser = User::paginate(7);
         return view('pages.user.index', compact('datauser'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('pages.user.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required',
             'address' => 'required',
             'phone_number' => 'required',
-            'email' => 'required',
+            'email' => 'required|email', // HAPUS rule unique
             'password' => 'required',
         ]);
 
-        $datauser = [
-            'name' => $request->name,
-            'address' => $request->address,
-            'phone_number' => $request->phone_number,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' =>  $request->role,
-        ];
 
-        if ($request->hasFile('photo')) {
-            $datauser['photo'] = $request->file('photo')->store('images_user', 'public');
+        try {
+            // cek email duplikat manual juga (optional safety check)
+            $existing = User::where('email', $request->email)->first();
+            if ($existing) {
+                return redirect()
+                    ->back()
+                    ->withInput($request->except('email')) // simpan input lain, kosongkan email
+                    ->with('error', 'duplicate_email');
+            }
+
+            $datauser = [
+                'name' => $request->name,
+                'address' => $request->address,
+                'phone_number' => $request->phone_number,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => $request->role,
+            ];
+
+            if ($request->hasFile('photo')) {
+                $datauser['photo'] = $request->file('photo')->store('images_user', 'public');
+            }
+
+            User::create($datauser);
+
+            return redirect()->route('user.index')
+                ->with('success', 'User data has been added successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to create user. Please try again!');
         }
-
-        User::create($datauser);
-
-        return redirect()->route('user.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
+
+
     public function show(User $user)
     {
         return view('pages.user.show', compact('user'));
     }
 
-
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $datauser = User::find($id);
-
-        // Kalau data tidak ditemukan → 404
         if (!$datauser) {
             abort(404);
         }
 
-        // Kalau sebelumnya sudah ada session ID dan beda → arahkan ke 403
-        if (session()->has('allowed_edit_id') && session('allowed_edit_id') != $id) {
-            return redirect()->route('error403');
-        }
-
-        // Simpan ID dan nama route terakhir yang diizinkan untuk diedit
         session([
             'allowed_edit_id' => $id,
             'last_edit_id' => $id,
@@ -106,69 +97,59 @@ class UserController extends Controller
         return view('pages.user.edit', compact('datauser'));
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $allowedId = session('allowed_edit_id');
-
-        // Kalau user manipulasi URL → langsung ke 403
         if ($allowedId != $id) {
             return redirect()->route('error403');
         }
 
         $datauser = User::find($id);
-
-        // Kalau data gak ada → 404
         if (!$datauser) {
             abort(404);
         }
 
-        $datauser = User::find($id);
+        try {
+            $updateData = $request->only(['name', 'address', 'phone_number', 'email', 'role']);
+            if ($request->filled('password')) {
+                $updateData['password'] = Hash::make($request->password);
+            }
 
-        if ($datauser == null) {
-            return redirect()->route('user.index');
-        }
+            if ($request->hasFile('photo')) {
+                if ($datauser->photo && Storage::disk('public')->exists($datauser->photo)) {
+                    Storage::disk('public')->delete($datauser->photo);
+                }
+                $updateData['photo'] = $request->file('photo')->store('images_user', 'public');
+            }
 
-        $updateData = $request->only(['name', 'address', 'phone_number', 'email', 'role']);
-        if ($request->filled('password')) {
-            $updateData['password'] = Hash::make($request->password);
+            $datauser->update($updateData);
+
+            session()->forget('allowed_edit_id');
+
+            return redirect()->route('user.index')->with('success', 'Data user berhasil diperbarui!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal memperbarui user: ' . $e->getMessage());
         }
-        if ($request->hasFile('photo')) {
+    }
+
+    public function destroy(string $id)
+    {
+        try {
+            $datauser = User::find($id);
+
+            if (!$datauser) {
+                return redirect()->route('user.index')->with('error', 'User tidak ditemukan.');
+            }
+
             if ($datauser->photo && Storage::disk('public')->exists($datauser->photo)) {
                 Storage::disk('public')->delete($datauser->photo);
             }
-            $updateData['photo'] = $request->file('photo')->store('images_user', 'public');
+
+            $datauser->delete();
+
+            return redirect()->route('user.index')->with('success', 'User berhasil dihapus!');
+        } catch (\Exception $e) {
+            return redirect()->route('user.index')->with('error', 'Gagal menghapus user: ' . $e->getMessage());
         }
-        $datauser->save($updateData);
-
-        session()->forget('allowed_edit_id');
-
-
-        return redirect()->route('user.index');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $datauser = User::find($id);
-
-        if (!$datauser) {
-            return redirect()->route('user.index');
-        }
-
-        // Hapus foto dari storage jika ada
-        if ($datauser->photo && Storage::disk('public')->exists($datauser->photo)) {
-            Storage::disk('public')->delete($datauser->photo);
-        }
-
-        // Hapus data user
-        $datauser->delete();
-
-        return redirect()->route('user.index');
     }
 }

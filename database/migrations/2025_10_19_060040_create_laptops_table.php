@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('laptops', function (Blueprint $table) {
             $table->id();
-            $table->string('photo');
+            $table->string('photo')->nullable();
             $table->string('brand');
-            $table->string('model');
+            $table->string('model')->unique();
             $table->year('release_year');
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();

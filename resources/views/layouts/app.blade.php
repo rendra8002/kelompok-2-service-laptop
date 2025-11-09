@@ -7,11 +7,31 @@
     <title>Layout &rsaquo; Default &mdash; Stisla</title>
 
     <!-- General CSS Files -->
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <link rel="stylesheet" href="{{ asset('assets/modules/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/modules/fontawesome/css/all.min.css') }}">
 
     <!-- CSS Libraries -->
+
+
     <style>
+        .user.admin {
+            color: #fff;
+            background-color: #3abaf4;
+        }
+
+        .user.customer {
+            color: #fff;
+            background-color: #63ed7a;
+        }
+
+        .user.technician {
+            color: #ffffff;
+            background-color: #ffc107;
+        }
+
         /* auto fill */
         .img-fill {
             object-fit: cover;
@@ -46,14 +66,12 @@
 </head>
 
 <body>
-
     <div class="main-wrapper main-wrapper-1">
         @include('layouts.navbar')
         @include('layouts.sidebar')
         @yield('content')
         @include('layouts.footer')
     </div>
-
     <!-- General JS Scripts -->
     <script src="{{ asset('assets/modules/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/modules/popper.js') }}"></script>
@@ -191,6 +209,7 @@
 
     {{-- ajakskskskssk --}}
     @stack('costom.js')
+    @stack('sekript')
 </body>
 
 </html>
