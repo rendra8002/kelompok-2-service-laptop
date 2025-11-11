@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Laptop extends Model
 {
+    use SoftDeletes; // ✅ Tambahkan SoftDeletes
+
     //table
     protected $table = 'laptops';
 
@@ -13,5 +16,4 @@ class Laptop extends Model
     protected $guarded = [];
 
     //relasi
-    
 }

@@ -18,19 +18,16 @@ class Service extends Model
     // App\Models\Service.php
     public function customer()
     {
-        return $this->belongsTo(User::class, 'customer_id');
+        return $this->belongsTo(User::class, 'customer_id')->withTrashed();
     }
-
     public function technician()
     {
-        return $this->belongsTo(User::class, 'technician_id');
+        return $this->belongsTo(User::class, 'technician_id')->withTrashed();
     }
-
     public function laptop()
     {
-        return $this->belongsTo(Laptop::class, 'laptop_id');
+        return $this->belongsTo(Laptop::class, 'laptop_id')->withTrashed();
     }
-
     public function details()
     {
         return $this->hasMany(Servicedetail::class, 'service_id');

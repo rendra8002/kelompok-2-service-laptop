@@ -107,10 +107,8 @@
                                                             method="POST" style="display:inline;">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger box"
-                                                                onclick="return confirm('Are you sure want to delete this item?')">
-                                                                Delete
-                                                            </button>
+                                                            <button type="submit"
+                                                                class="btn btn-danger box btn-delete">Delete</button>
                                                         </form>
 
                                                         <label class="custom-switch ml-3">
@@ -153,8 +151,28 @@
         </section>
     </div>
 
-    {{-- ✅ JQuery --}}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // ✅ SweetAlert2 Delete Confirmation (English)
+        $(document).on('click', '.btn-delete', function(e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This item will be permanently deleted!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
 
     <script>
         // ✅ Client-side search filter

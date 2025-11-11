@@ -199,8 +199,9 @@ class ServicesController extends Controller
             'customer',
             'technician',
             'laptop',
-            'details.serviceType'
+            'details.serviceitem' // ganti dari 'serviceType' jadi 'serviceitem'
         ])->findOrFail($id);
+
 
         return view('pages.services.show', compact('service'));
     }

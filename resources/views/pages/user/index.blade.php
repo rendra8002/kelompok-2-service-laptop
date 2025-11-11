@@ -154,12 +154,13 @@
                                                         <a href="{{ route('user.show', $user->id) }}"
                                                             class="btn btn-secondary box">Detail</a>
                                                         <form action="{{ route('user.destroy', $user->id) }}"
-                                                            method="POST" style="display:inline;">
+                                                            method="POST" style="display:inline;" class="delete-form">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit"
-                                                                class="btn btn-danger box">Delete</button>
+                                                                class="btn btn-danger box btn-delete">Delete</button>
                                                         </form>
+
                                                     </div>
                                                 </td>
                                             </tr>
@@ -193,8 +194,35 @@
         </section>
     </div>
 
-    {{-- JQuery --}}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    {{-- delet konfirm --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // ✅ Delete confirmation using SweetAlert2
+        $(document).on('click', '.btn-delete', function(e) {
+            e.preventDefault(); // prevent immediate form submit
+            const form = $(this).closest('form');   
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Deleted data cannot be recovered!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // proceed with delete if confirmed
+                }
+            });
+        });
+    </script>
+
+    {{-- end delet --}}
+
 
     <script>
         $(document).ready(function() {

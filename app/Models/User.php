@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes; // ✅ tambahkan ini
 
 class User extends Authenticatable
 {
-  use Notifiable;
+  use Notifiable, SoftDeletes; // ✅ aktifkan soft delete
 
   protected $table = 'users';
 

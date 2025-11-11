@@ -141,13 +141,10 @@ class UserController extends Controller
                 return redirect()->route('user.index')->with('error', 'User tidak ditemukan.');
             }
 
-            if ($datauser->photo && Storage::disk('public')->exists($datauser->photo)) {
-                Storage::disk('public')->delete($datauser->photo);
-            }
-
+            // ❌ Jangan hapus foto dulu, cukup soft delete data
             $datauser->delete();
 
-            return redirect()->route('user.index')->with('success', 'User berhasil dihapus!');
+            return redirect()->route('user.index')->with('success', 'User berhasil dihapus (soft delete)!');
         } catch (\Exception $e) {
             return redirect()->route('user.index')->with('error', 'Gagal menghapus user: ' . $e->getMessage());
         }

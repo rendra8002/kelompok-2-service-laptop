@@ -258,5 +258,6 @@
 
             updateNumberServiceTypeRow();
         }
+        
     </script>
 @endpush

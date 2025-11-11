@@ -66,11 +66,11 @@ class LaptopController extends Controller
         // 🔍 Cek apakah model sudah ada
         $existing = Laptop::where('model', $request->model)->first();
         if ($existing) {
-         
+
             return redirect()
                 ->back()
                 ->withInput($request->except('model')) // Simpan input lain, kecuali model
-                ->with('error', "' $request->model '" );
+                ->with('error', "' $request->model '");
         }
 
         $datalaptop = [
@@ -176,17 +176,12 @@ class LaptopController extends Controller
         $datalaptop = Laptop::find($id);
 
         if (!$datalaptop) {
-            return redirect()->route('laptop.index');
+            return redirect()->route('laptop.index')->with('error', 'Laptop not found.');
         }
 
-        // Hapus foto dari storage jika ada
-        if ($datalaptop->photo && Storage::disk('public')->exists($datalaptop->photo)) {
-            Storage::disk('public')->delete($datalaptop->photo);
-        }
-
-        // Hapus data laptop
+        // Soft delete data laptop saja
         $datalaptop->delete();
 
-        return redirect()->route('laptop.index');
+        return redirect()->route('laptop.index')->with('success', 'Laptop deleted successfully.');
     }
 }
