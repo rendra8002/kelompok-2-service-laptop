@@ -176,17 +176,12 @@ class LaptopController extends Controller
         $datalaptop = Laptop::find($id);
 
         if (!$datalaptop) {
-            return redirect()->route('laptop.index');
+            return redirect()->route('laptop.index')->with('error', 'Laptop not found.');
         }
 
-        // Hapus foto dari storage jika ada
-        if ($datalaptop->photo && Storage::disk('public')->exists($datalaptop->photo)) {
-            Storage::disk('public')->delete($datalaptop->photo);
-        }
-
-        // Hapus data laptop
+        // Soft delete data laptop saja
         $datalaptop->delete();
 
-        return redirect()->route('laptop.index');
+        return redirect()->route('laptop.index')->with('success', 'Laptop deleted successfully.');
     }
 }

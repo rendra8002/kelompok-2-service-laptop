@@ -153,11 +153,16 @@ class ServiceitemController extends Controller
         return redirect()->route('serviceitem.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $serviceitem = Serviceitem::find($id);
+
+        if (!$serviceitem) {
+            return redirect()->route('serviceitem.index')->with('error', 'Service item not found.');
+        }
+
+        $serviceitem->delete(); // soft delete
+
+        return redirect()->route('serviceitem.index')->with('success', 'Service item deleted successfully.');
     }
 }
