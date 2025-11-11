@@ -103,7 +103,7 @@
                                         <tr>
                                             <td>{{ $i + 1 }}</td>
                                             <td><input type="text" class="form-control"
-                                                    value="{{ $detail->serviceitem->service_name ?? '-' }}" readonly></td>
+                                                    value="{{ $detail->serviceType->service_name ?? '-' }}" readonly></td>
                                             <td><input type="text" class="form-control text-right price-item"
                                                     value="Rp {{ number_format($detail->price, 0, ',', '.') }}" readonly>
                                             </td>
@@ -141,23 +141,24 @@
                             </div>
 
                             <div class="form-group mb-3">
-                                <label>Paid</label>
-                                <input type="text" id="paid" class="form-control" value="Rp 0">
+                                <label>Paid (Jumlah yang dibayar)</label>
+                                <input type="text" id="paid" class="form-control" value="Rp 0"
+                                    placeholder="Masukkan jumlah dibayar">
                             </div>
 
                             <div class="form-group mb-3">
-                                <label>Remaining Paid</label>
+                                <label>Remaining Paid (Sisa Pembayaran)</label>
                                 <input type="text" id="remaining_paid" class="form-control" readonly
                                     value="Rp {{ ($service->details->sum('price') ?? 0) + ($service->other_cost ?? 0) - ($service->paid ?? 0) }}">
                             </div>
 
                             <div class="form-group mb-3">
-                                <label>Change</label>
+                                <label>Change (Kembalian)</label>
                                 <input type="text" id="change" class="form-control" readonly>
                             </div>
 
                             <div class="form-group mb-3">
-                                <label>Status Paid</label>
+                                <label>Status Pembayaran</label>
                                 <div id="status_paid_container">
                                     @php
                                         $badgeClass = match ($service->status_paid) {
@@ -184,6 +185,12 @@
             </div>
         </section>
     </div>
+
+
+
+
+    {{-- SweetAlert --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         const statusSelect = document.getElementById('status');
@@ -229,19 +236,17 @@
 
             let initialPaid = parseInt("{{ $service->paid ?? 0 }}");
             let totalFromDB = parseInt(
-                "{{ ($service->details->sum('price') ?? 0) + ($service->other_cost ?? 0) }}"
-            );
+                "{{ ($service->details->sum('price') ?? 0) + ($service->other_cost ?? 0) }}");
 
             // 🔹 Format Rupiah
             const formatRupiah = (angka) => {
                 angka = angka.toString().replace(/[^,\d]/g, '');
-                if (!angka) return 'Rp 0';
                 const split = angka.split(',');
                 const sisa = split[0].length % 3;
                 let rupiah = split[0].substr(0, sisa);
                 const ribuan = split[0].substr(sisa).match(/\d{3}/gi);
                 if (ribuan) rupiah += (sisa ? '.' : '') + ribuan.join('.');
-                return 'Rp ' + rupiah;
+                return rupiah ? 'Rp ' + rupiah : 'Rp 0';
             };
 
             // 🔹 Total dari detail service
@@ -263,17 +268,14 @@
 
             // 🔹 Update status dan sisa bayar
             const updatePayment = () => {
-                const paidNow = parseInt(paidInput.value.replace(/\D/g, '')) || 0;
-                const totalPaid = initialPaid + paidNow;
-
-                let remaining = Math.max(totalFromDB - totalPaid, 0);
+                const remaining = Math.max(totalFromDB - initialPaid, 0);
                 let status = 'unpaid';
                 let change = 0;
 
-                if (totalPaid >= totalFromDB && totalFromDB > 0) {
+                if (initialPaid >= totalFromDB && totalFromDB > 0) {
                     status = 'paid';
-                    change = totalPaid - totalFromDB;
-                } else if (totalPaid > 0 && totalPaid < totalFromDB) {
+                    change = initialPaid - totalFromDB;
+                } else if (initialPaid > 0 && initialPaid < totalFromDB) {
                     status = 'debt';
                 }
 
@@ -347,6 +349,7 @@
                                 text: 'Status pembayaran: ' + data.status.toUpperCase(),
                                 confirmButtonColor: '#28a745'
                             }).then(() => {
+                                // ✅ Redirect ke halaman index setelah bayar
                                 window.location.href = "{{ route('services.index') }}";
                             });
 
@@ -356,24 +359,38 @@
                     }).catch(() => Swal.fire('Error', 'Terjadi kesalahan server', 'error'));
             });
 
+
             // 🔹 Format input Other Cost realtime
             otherCostInput.addEventListener('input', e => {
                 let value = e.target.value.replace(/\D/g, '');
-                e.target.value = value ? 'Rp ' + new Intl.NumberFormat('id-ID').format(value) : 'Rp ';
+                if (!value) {
+                    e.target.value = 'Rp ';
+                } else {
+                    e.target.value = 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                }
                 updateTotal();
             });
 
+            // 🔹 Saat fokus — hapus angka 0 tapi pertahankan Rp
             otherCostInput.addEventListener('focus', e => {
-                let numeric = e.target.value.replace(/\D/g, '');
-                if (numeric === '0' || numeric === '') e.target.value = 'Rp ';
+                let value = e.target.value.replace(/\D/g, '');
+                if (value === '0') {
+                    e.target.value = 'Rp ';
+                }
             });
 
+            // 🔹 Saat blur — pastikan tetap ada Rp dan angka minimal 0
             otherCostInput.addEventListener('blur', e => {
-                let numeric = e.target.value.replace(/\D/g, '');
-                e.target.value = numeric ? 'Rp ' + new Intl.NumberFormat('id-ID').format(numeric) : 'Rp 0';
+                let value = e.target.value.replace(/\D/g, '');
+                if (!value) {
+                    e.target.value = 'Rp 0';
+                } else {
+                    e.target.value = 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                }
                 saveOtherCost();
             });
 
+            // 🔹 Simpan ke server saat Enter ditekan
             otherCostInput.addEventListener('keydown', e => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -382,26 +399,31 @@
                 }
             });
 
-            // 🔹 Format input Paid realtime + selalu ada Rp
+
+            // 🔹 Format input Paid realtime
             paidInput.addEventListener('input', e => {
                 let value = e.target.value.replace(/\D/g, '');
-                paidInput.value = 'Rp ' + (value ? new Intl.NumberFormat('id-ID').format(value) : '0');
-                updatePayment();
+                paidInput.value = value ? formatRupiah(value) : 'Rp 0';
             });
 
             paidInput.addEventListener('focus', e => {
-                let numeric = paidInput.value.replace(/\D/g, '');
-                // Jika numeric 0 atau kosong, hapus angka tapi tetap ada Rp
-                paidInput.value = 'Rp ' + (numeric && numeric !== '0' ? new Intl.NumberFormat('id-ID')
-                    .format(numeric) : '');
+                if (paidInput.value === 'Rp 0') paidInput.value = '';
             });
 
             paidInput.addEventListener('blur', e => {
-                let numeric = paidInput.value.replace(/\D/g, '');
-                paidInput.value = 'Rp ' + (numeric ? new Intl.NumberFormat('id-ID').format(numeric) : '0');
-                updatePayment();
+                if (!paidInput.value) paidInput.value = 'Rp 0';
+                else paidInput.value = formatRupiah(paidInput.value.replace(/\D/g, ''));
             });
 
+            // 🔹 Event simpan other cost otomatis
+            otherCostInput.addEventListener('blur', saveOtherCost);
+            otherCostInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveOtherCost();
+                    otherCostInput.blur();
+                }
+            });
 
             // 🔹 Inisialisasi awal
             updateTotal();

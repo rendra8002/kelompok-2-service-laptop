@@ -66,11 +66,11 @@ class LaptopController extends Controller
         // 🔍 Cek apakah model sudah ada
         $existing = Laptop::where('model', $request->model)->first();
         if ($existing) {
-
+         
             return redirect()
                 ->back()
                 ->withInput($request->except('model')) // Simpan input lain, kecuali model
-                ->with('error', "' $request->model '");
+                ->with('error', "' $request->model '" );
         }
 
         $datalaptop = [
